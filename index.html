@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Montano - Interactive Digital Whiteboard (Plan 2)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        montanoBlue: '#1269A8',
+                        montanoYellow: '#F7D615',
+                        montanoGreen: '#54887D',
+                        montanoLightBlue: '#88B5C7',
+                        montanoOlive: '#A6B046',
+                        montanoBg: '#F2F5E9',
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Verdana', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F2F5E9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .tab-btn.active {
+            background-color: #1269A8;
+            color: #ffffff;
+            border-bottom: 4px solid #F7D615;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn {
+            background-color: #ffffff;
+            color: #1269A8;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover:not(.active) {
+            background-color: #88B5C7;
+            color: #ffffff;
+        }
+        .board-card {
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            border: 2px solid #88B5C7;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F2F5E9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #54887D;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col justify-between">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-montanoBlue text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
+            <!-- Brand / Logo -->
+            <div class="flex items-center space-x-4">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" 
+                     alt="Colegio Montano Logo" 
+                     class="h-12 w-auto bg-white p-1 rounded-lg shadow-sm border border-montanoYellow"
+                     onerror="this.src='https://placehold.co/120x50/1269A8/FFFFFF?text=Colegio+Montano'">
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide uppercase text-montanoYellow">Colegio Montano</h1>
+                    <p class="text-xs text-montanoLightBlue font-semibold">Interactive Digital Whiteboard | Plan #2</p>
+                </div>
+            </div>
+
+            <!-- Header Info -->
+            <div class="hidden md:flex items-center space-x-6 text-sm">
+                <div class="text-right">
+                    <span class="block text-xs text-montanoYellow font-semibold uppercase">Course & Grade</span>
+                    <span>Psychology | 11th Grade (Unit 4)</span>
+                </div>
+                <div class="text-right border-l border-montanoLightBlue pl-6">
+                    <span class="block text-xs text-montanoYellow font-semibold uppercase">Teacher & Date</span>
+                    <span>Ms. Elysa López | Aug 23-27</span>
+                </div>
+            </div>
+
+            <!-- Fullscreen Toggle Button -->
+            <button onclick="toggleFullScreen()" class="bg-montanoYellow hover:bg-yellow-400 text-montanoBlue font-bold py-2 px-4 rounded-xl flex items-center space-x-2 transition duration-200 shadow-md">
+                <i class="fas font-black fa-expand" id="fullscreen-icon"></i>
+                <span id="fullscreen-text" class="hidden sm:inline">Fullscreen</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- METADATA & INSTITUTIONAL FRAMEWORK BAR -->
+    <section class="bg-white border-b-2 border-montanoLightBlue px-4 py-3 shadow-inner">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs sm:text-sm">
+            <div class="p-2 rounded-lg bg-montanoBg border-l-4 border-montanoBlue">
+                <span class="font-bold text-montanoBlue block mb-1"><i class="fas fa-bullseye mr-1"></i> CNB Learning Outcome</span>
+                Differentiates regulation from suppression, applies coping strategies, and identifies mental health support systems.
+            </div>
+            <div class="p-2 rounded-lg bg-montanoBg border-l-4 border-montanoGreen">
+                <span class="font-bold text-montanoGreen block mb-1"><i class="fas fa-brain mr-1"></i> Key Competencies</span>
+                Empathy, Mental Health Literacy, Problem-Solving, Communication, & Resilience.
+            </div>
+            <div class="p-2 rounded-lg bg-montanoBg border-l-4 border-montanoOlive">
+                <span class="font-bold text-montanoOlive block mb-1"><i class="fas fa-star mr-1"></i> Montano Habit</span>
+                <strong>Sharpen the Saw (Afilar la Sierra) & Put First Things First</strong>
+            </div>
+            <div class="p-2 rounded-lg bg-montanoBg border-l-4 border-montanoYellow">
+                <span class="font-bold text-gray-700 block mb-1"><i class="fas fa-tools mr-1"></i> Session Resources</span>
+                Notebooks, Grounding Exercise Cards, Stress Scenario Worksheets, Myths Trivia.
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN BOARD CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        
+        <!-- TABS NAVIGATION -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+            <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active py-3 px-4 rounded-xl font-bold text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 border border-montanoBlue">
+                <i class="fas fa-history text-montanoYellow text-lg"></i>
+                <span>I) Retrieval & Intro</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-montanoYellow text-montanoBlue font-black">15 min</span>
+            </button>
+
+            <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn py-3 px-4 rounded-xl font-bold text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 border border-montanoBlue">
+                <i class="fas fa-heartbeat text-lg"></i>
+                <span>II) Coping Lab</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-montanoLightBlue text-white font-black">15 min</span>
+            </button>
+
+            <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn py-3 px-4 rounded-xl font-bold text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 border border-montanoBlue">
+                <i class="fas fa-puzzle-piece text-lg"></i>
+                <span>III) Case Scenario</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-montanoGreen text-white font-black">10 min</span>
+            </button>
+
+            <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn py-3 px-4 rounded-xl font-bold text-sm sm:text-base flex flex-col sm:flex-row items-center justify-center gap-2 border border-montanoBlue">
+                <i class="fas fa-shield-alt text-lg"></i>
+                <span>IV) Myths & Plenary</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-montanoOlive text-white font-black">20 min</span>
+            </button>
+        </div>
+
+        <!-- TAB CONTENT CONTAINERS -->
+        
+        <!-- TAB 1: RETRIEVAL & INTRO (15 MIN total: 5m retrieval + 10m concept) -->
+        <div id="tab1" class="tab-content board-card p-6">
+            <div class="border-b-2 border-montanoYellow pb-3 mb-4 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-montanoBlue"><i class="fas fa-retweet mr-2 text-montanoYellow"></i> Stage I: Retrieval & Regulation vs. Suppression</h2>
+                <span class="bg-montanoBlue text-white font-bold px-3 py-1 rounded-full text-sm">Diagnostic & Intro</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 5-Min Retrieval Practice -->
+                <div class="bg-montanoBg p-5 rounded-xl border border-montanoLightBlue">
+                    <h3 class="font-bold text-lg text-montanoGreen mb-2"><i class="fas fa-brain mr-2"></i> Retrieval Practice (5 mins)</h3>
+                    <p class="text-gray-700 text-sm mb-3">Quick recall from Plan 1: Write answers on your whiteboard/notebook:</p>
+                    <div class="space-y-2 text-xs sm:text-sm">
+                        <div class="p-3 bg-white rounded-lg shadow-sm border-l-4 border-montanoBlue">
+                            <strong>Q1:</strong> What is the key difference between a <em>Trigger</em> and a <em>Thought</em>?
+                        </div>
+                        <div class="p-3 bg-white rounded-lg shadow-sm border-l-4 border-montanoYellow">
+                            <strong>Q2:</strong> Why is naming a precise emotion ("Emotional Granularity") helpful before acting?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10-Min Core Concept: Regulation vs Suppression -->
+                <div class="bg-montanoBg p-5 rounded-xl border border-montanoLightBlue">
+                    <h3 class="font-bold text-lg text-montanoBlue mb-2"><i class="fas fa-balance-scale mr-2"></i> Emotional Regulation vs. Suppression (10 mins)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                            <h4 class="font-bold text-red-700 text-base mb-1"><i class="fas fa-ban mr-1"></i> Suppression (Bottle up)</h4>
+                            <p class="text-gray-700">Pushing emotions down, pretending they don't exist. Increases physiological stress and leads to explosive outbursts later.</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                            <h4 class="font-bold text-green-700 text-base mb-1"><i class="fas fa-seedling mr-1"></i> Regulation (Process)</h4>
+                            <p class="text-gray-700">Acknowledging the emotion, managing bodily responses, and choosing a constructive, healthy path forward.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: INDIVIDUAL WORK / COPING LAB (15 MIN) -->
+        <div id="tab2" class="tab-content board-card p-6 hidden">
+            <div class="border-b-2 border-montanoYellow pb-3 mb-4 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-montanoBlue"><i class="fas fa-tools mr-2 text-montanoGreen"></i> Stage II: Coping Toolkit & Grounding Practice</h2>
+                <span class="bg-montanoGreen text-white font-bold px-3 py-1 rounded-full text-sm">Individual Practice</span>
+            </div>
+
+            <p class="text-gray-600 mb-4 text-sm">Explore and test four distinct evidence-based emotional regulation strategies in your personal coping log.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Strategy 1: Box Breathing -->
+                <div class="border border-montanoLightBlue rounded-xl p-4 bg-white shadow-sm">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleAccordion('strat1')">
+                        <h3 class="font-bold text-montanoBlue text-sm sm:text-base">
+                            <i class="fas fa-wind text-montanoLightBlue mr-2"></i> 1. Box Breathing Technique
+                        </h3>
+                        <button class="text-montanoBlue"><i class="fas fa-chevron-down" id="strat1-icon"></i></button>
+                    </div>
+                    <div id="strat1" class="hidden mt-3 pt-3 border-t border-gray-200 text-xs sm:text-sm text-gray-700 space-y-1">
+                        <p class="font-bold text-montanoBlue">4-4-4-4 Cycle:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Inhale through nose for 4 seconds.</li>
+                            <li>Hold breath for 4 seconds.</li>
+                            <li>Exhale slowly through mouth for 4 seconds.</li>
+                            <li>Hold empty for 4 seconds. Repeat 3 times.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Strategy 2: 5-4-3-2-1 Grounding -->
+                <div class="border border-montanoLightBlue rounded-xl p-4 bg-white shadow-sm">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleAccordion('strat2')">
+                        <h3 class="font-bold text-montanoBlue text-sm sm:text-base">
+                            <i class="fas fa-eye text-montanoGreen mr-2"></i> 2. 5-4-3-2-1 Sensory Grounding
+                        </h3>
+                        <button class="text-montanoBlue"><i class="fas fa-chevron-down" id="strat2-icon"></i></button>
+                    </div>
+                    <div id="strat2" class="hidden mt-3 pt-3 border-t border-gray-200 text-xs sm:text-sm text-gray-700">
+                        <p class="font-bold text-montanoGreen mb-1">To pull out of panic/overwhelm, identify around you:</p>
+                        <p><strong>5</strong> things you see • <strong>4</strong> things you touch • <strong>3</strong> things you hear • <strong>2</strong> things you smell • <strong>1</strong> positive thing about yourself.</p>
+                    </div>
+                </div>
+
+                <!-- Strategy 3: Problem-Solving -->
+                <div class="border border-montanoLightBlue rounded-xl p-4 bg-white shadow-sm">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleAccordion('strat3')">
+                        <h3 class="font-bold text-montanoBlue text-sm sm:text-base">
+                            <i class="fas fa-tasks text-montanoYellow mr-2"></i> 3. Control vs. No Control Audit
+                        </h3>
+                        <button class="text-montanoBlue"><i class="fas fa-chevron-down" id="strat3-icon"></i></button>
+                    </div>
+                    <div id="strat3" class="hidden mt-3 pt-3 border-t border-gray-200 text-xs sm:text-sm text-gray-700">
+                        <p class="font-semibold mb-1">Circle what you CAN control (your effort, response, boundaries) and release what you CANNOT (others' reactions, past events).</p>
+                    </div>
+                </div>
+
+                <!-- Strategy 4: Seeking Support -->
+                <div class="border border-montanoLightBlue rounded-xl p-4 bg-white shadow-sm">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleAccordion('strat4')">
+                        <h3 class="font-bold text-montanoBlue text-sm sm:text-base">
+                            <i class="fas fa-hands-helping text-montanoOlive mr-2"></i> 4. Activating Support Network
+                        </h3>
+                        <button class="text-montanoBlue"><i class="fas fa-chevron-down" id="strat4-icon"></i></button>
+                    </div>
+                    <div id="strat4" class="hidden mt-3 pt-3 border-t border-gray-200 text-xs sm:text-sm text-gray-700">
+                        <p>Identify 2 <strong>Trusted Adults</strong> (e.g., School Counselor, Parent, Coach, Teacher) to contact when stress exceeds self-help strategies.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TEAM ACTIVITY / CASE SCENARIO (10 MIN) -->
+        <div id="tab3" class="tab-content board-card p-6 hidden">
+            <div class="border-b-2 border-montanoYellow pb-3 mb-4 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-montanoBlue"><i class="fas fa-users mr-2 text-montanoLightBlue"></i> Stage III: Fictional Stress Case Analysis</h2>
+                <span class="bg-montanoLightBlue text-white font-bold px-3 py-1 rounded-full text-sm">Teams of 3 - 4</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Case Prompt -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-montanoLightBlue">
+                    <span class="bg-montanoBlue text-white text-xs font-bold px-2 py-1 rounded uppercase">Case Study: Maya's Overload</span>
+                    <p class="text-sm text-gray-700 mt-3 mb-4">
+                        Maya is balancing 3 AP assignments, varsity sports practice, and family responsibilities. She hasn't slept well in 4 days. When a teammate gently asks if she finished her part of the report, Maya bursts into tears, yells <em>"Stop pressuring me!"</em> and locks herself in the restroom.
+                    </p>
+                    
+                    <div class="bg-montanoBg p-4 rounded-lg border-l-4 border-montanoBlue text-xs sm:text-sm">
+                        <h4 class="font-bold text-montanoBlue mb-2"><i class="fas fa-clipboard-list mr-1"></i> Team Task (10 mins):</h4>
+                        <ol class="list-decimal list-inside space-y-1 text-gray-700">
+                            <li>Identify Maya's cumulative stressors vs. her acute trigger.</li>
+                            <li>Was Maya regulating or suppressing her emotions leading up to this moment? Explain.</li>
+                            <li>Design a <strong>Rescue Coping Plan</strong> for Maya utilizing at least two techniques from Stage II.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Team Synergize Roles -->
+                <div class="bg-montanoBg p-4 rounded-xl border border-montanoLightBlue col-span-1">
+                    <h3 class="font-bold text-montanoBlue mb-2"><i class="fas fa-star mr-1"></i> Montano Roles</h3>
+                    <ul class="text-xs sm:text-sm space-y-2 text-gray-700">
+                        <li class="bg-white p-2 rounded shadow-sm"><strong>Facilitator:</strong> Manages time (10m) & ensures equal voices.</li>
+                        <li class="bg-white p-2 rounded shadow-sm"><strong>Scribe:</strong> Records the team's Rescue Coping Plan.</li>
+                        <li class="bg-white p-2 rounded shadow-sm"><strong>Reporter:</strong> Shares 1 key insight during Plenary.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: PLENARY, MYTHS & RUBRIC (20 MIN) -->
+        <div id="tab4" class="tab-content board-card p-6 hidden">
+            <div class="border-b-2 border-montanoYellow pb-3 mb-4 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-montanoBlue"><i class="fas fa-user-shield mr-2 text-montanoOlive"></i> Stage IV: Mental Health Myths & Plenary</h2>
+                <span class="bg-montanoOlive text-white font-bold px-3 py-1 rounded-full text-sm">Summative & Stigma Reduction</span>
+            </div>
+
+            <!-- MYTHS VS FACTS GAME -->
+            <div class="bg-montanoBg p-5 rounded-xl border border-montanoLightBlue mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-lg text-montanoBlue"><i class="fas fa-bullhorn mr-2 text-montanoYellow"></i> Interactive Quiz: "Mental Health MythBusters"</h3>
+                    <span id="quiz2-score" class="bg-montanoBlue text-montanoYellow font-bold px-3 py-1 rounded-lg text-xs">Score: 0 / 2</span>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <p id="quiz2-question" class="font-semibold text-gray-800 text-sm sm:text-base mb-3">Myth or Fact? "Asking for help from a school counselor or psychologist is a sign of personal weakness."</p>
+                    <div id="quiz2-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                        <button onclick="checkQuiz2(this, false)" class="p-3 text-left bg-gray-100 hover:bg-montanoLightBlue hover:text-white rounded font-bold transition">A) FACT - You should solve it on your own.</button>
+                        <button onclick="checkQuiz2(this, true)" class="p-3 text-left bg-gray-100 hover:bg-montanoLightBlue hover:text-white rounded font-bold transition">B) MYTH - Seeking help is a proactive act of strength and resilience.</button>
+                    </div>
+                    <div id="quiz2-feedback" class="mt-3 text-xs font-bold hidden"></div>
+                </div>
+            </div>
+
+            <!-- RUBRIC FOR PLENARY PRESENTATION -->
+            <div class="bg-white rounded-xl border border-montanoLightBlue overflow-hidden shadow-sm">
+                <div class="bg-montanoBlue text-white p-3 font-bold text-sm sm:text-base flex justify-between items-center">
+                    <span><i class="fas fa-clipboard-check mr-2"></i> Plenary & Presentation Rubric</span>
+                    <span class="text-xs font-normal text-montanoYellow">Interactive Checkbox Scoring</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left text-gray-700">
+                        <thead class="bg-montanoBg text-montanoBlue uppercase text-xs font-bold border-b border-montanoLightBlue">
+                            <tr>
+                                <th class="py-3 px-4">Criteria</th>
+                                <th class="py-3 px-4 text-center">Exemplary (3 pts)</th>
+                                <th class="py-3 px-4 text-center">Developing (2 pts)</th>
+                                <th class="py-3 px-4 text-center">Needs Work (1 pt)</th>
+                                <th class="py-3 px-4 text-center">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="py-3 px-4 font-semibold">1. Distinction of Regulation vs. Suppression</td>
+                                <td class="py-3 px-4 text-xs">Clearly articulated difference using case evidence.</td>
+                                <td class="py-3 px-4 text-xs">Vaguely distinguished terms.</td>
+                                <td class="py-3 px-4 text-xs">Confused suppression with regulation.</td>
+                                <td class="py-3 px-4 text-center"><input type="checkbox" class="w-4 h-4 text-montanoBlue rounded"></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4 font-semibold">2. Practicality of Coping Plan</td>
+                                <td class="py-3 px-4 text-xs">Proposed realistic, multi-step evidence-based actions.</td>
+                                <td class="py-3 px-4 text-xs">Proposed single or vague solution.</td>
+                                <td class="py-3 px-4 text-xs">Proposed unhelpful or reactive strategy.</td>
+                                <td class="py-3 px-4 text-center"><input type="checkbox" class="w-4 h-4 text-montanoBlue rounded"></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4 font-semibold">3. Mental Health Literacy & Help-Seeking</td>
+                                <td class="py-3 px-4 text-xs">Correctly identified trusted adults & reduced stigma.</td>
+                                <td class="py-3 px-4 text-xs">Identified generic support without specifics.</td>
+                                <td class="py-3 px-4 text-xs">Dismissed professional support options.</td>
+                                <td class="py-3 px-4 text-center"><input type="checkbox" class="w-4 h-4 text-montanoBlue rounded"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER / EXIT TICKET & ASSIGNMENT DUE REMINDER -->
+    <footer class="bg-montanoBlue text-white border-t-4 border-montanoYellow py-4 px-4 mt-6">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs sm:text-sm">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-ticket-alt text-montanoYellow text-lg"></i>
+                <div>
+                    <span class="font-bold text-montanoYellow block">5-Min Exit Ticket & Due Date:</span>
+                    <span>"Name 1 trusted adult you can reach out to in times of stress. 📢 <strong>REMINDER: Activity 1 is DUE TODAY!</strong>"</span>
+                </div>
+            </div>
+            <div class="text-right text-montanoLightBlue text-xs">
+                <span>Colegio Montano Model | CNB Guatemala Alignment</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
+    <script>
+        // Fullscreen Toggle Logic
+        function toggleFullScreen() {
+            const icon = document.getElementById('fullscreen-icon');
+            const text = document.getElementById('fullscreen-text');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    icon.classList.remove('fa-expand');
+                    icon.classList.add('fa-compress');
+                    text.innerText = "Exit Fullscreen";
+                }).catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        icon.classList.remove('fa-compress');
+                        icon.classList.add('fa-expand');
+                        text.innerText = "Fullscreen";
+                    });
+                }
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.add('hidden'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        // Accordion Toggle Logic
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                el.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Quiz 2 Logic
+        function checkQuiz2(btn, isCorrect) {
+            const feedback = document.getElementById('quiz2-feedback');
+            const counter = document.getElementById('quiz2-score');
+            const allBtns = document.querySelectorAll('#quiz2-options button');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btn.classList.remove('bg-gray-100');
+                btn.classList.add('bg-green-500', 'text-white');
+                feedback.innerText = "Correct! Reaching out to professional support or trusted adults is a key proactive strategy (Afilar la Sierra).";
+                feedback.classList.remove('hidden', 'text-red-600');
+                feedback.classList.add('text-green-600');
+                counter.innerText = "Score: 2 / 2";
+            } else {
+                btn.classList.remove('bg-gray-100');
+                btn.classList.add('bg-red-500', 'text-white');
+                feedback.innerText = "Incorrect. Seeking support is a sign of resilience, not weakness!";
+                feedback.classList.remove('hidden', 'text-green-600');
+                feedback.classList.add('text-red-600');
+                counter.innerText = "Score: 0 / 2";
+            }
+        }
+    </script>
+</body>
+</html>
